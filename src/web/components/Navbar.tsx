@@ -1,42 +1,48 @@
-import { useState, useEffect, useLayoutEffect } from "react";
+import { useState, useLayoutEffect } from "react";
+import { useLocation } from "wouter";
 
 const PRODUCTS = [
-  { icon: "🧵", label: "Stitching Engine™",  desc: "Bank TXN → Receipt → SKU", href: "#solution" },
-  { icon: "⛔", label: "Kill Switch™",        desc: "Block merchants instantly",  href: "#features" },
-  { icon: "🛡️", label: "Zombie Detector™",   desc: "Kill unused subscriptions",  href: "#features" },
+  { icon: "🧵", label: "Stitching Engine™",  desc: "Bank TXN → Receipt → SKU", href: "/products/stitching-engine" },
+  { icon: "⛔", label: "Kill Switch™",        desc: "Block merchants instantly",  href: "/products/kill-switch" },
+  { icon: "🛡️", label: "Zombie Detector™",   desc: "Kill unused subscriptions",  href: "/products/zombie-detector" },
+  { icon: "🔗", label: "TaxLink™",            desc: "Auto-categorize deductions", href: "/products/tax-link" },
+  { icon: "💰", label: "Price Guardian™",     desc: "Auto-refund price drops",    href: "/products/price-guardian" },
+  { icon: "🔮", label: "Cash Flow Oracle™",   desc: "Predict your balance 90d out",href: "/products/cash-flow-oracle" },
 ];
 const PHASES = [
-  { icon: "🚀", label: "Phase 1 — The Wedge",     desc: "Consumer SaaS, 10K users",      href: "#roadmap" },
-  { icon: "📡", label: "Phase 2 — The Platform",  desc: "Virtual Card + B2B Data API",   href: "#roadmap" },
-  { icon: "🌐", label: "Phase 3 — Infrastructure",desc: "Proof of Purchase protocol",    href: "#roadmap" },
+  { icon: "🚀", label: "Phase 1 — The Wedge",      desc: "Consumer SaaS, 10K users",      href: "/roadmap" },
+  { icon: "📡", label: "Phase 2 — The Platform",   desc: "Virtual Card + B2B Data API",   href: "/roadmap" },
+  { icon: "🌐", label: "Phase 3 — Infrastructure", desc: "Proof of Purchase protocol",    href: "/roadmap" },
 ];
 const USE_CASES = [
-  { icon: "💸", label: "Zombie Subscriptions", desc: "Find & kill unused subs",      href: "#use-cases" },
-  { icon: "🧾", label: "Tax Automation",        desc: "Auto-generate deduction docs", href: "#use-cases" },
-  { icon: "🏷️", label: "SKU Intelligence",     desc: "Item-level purchase data",     href: "#use-cases" },
-  { icon: "💳", label: "Smart Card Control",    desc: "Programmable spend rules",     href: "#use-cases" },
+  { icon: "💸", label: "Zombie Subscriptions", desc: "Find & kill everything you forgot", href: "/use-cases/zombie-subscriptions" },
+  { icon: "🧾", label: "Tax Automation",        desc: "Auto-generate deduction docs",      href: "/use-cases/tax-automation" },
+  { icon: "🏷️", label: "SKU Intelligence",     desc: "Item-level purchase data",           href: "/use-cases/sku-intelligence" },
+  { icon: "💳", label: "Smart Card Control",    desc: "Programmable spend rules",           href: "/use-cases/card-control" },
 ];
 const DEVS = [
-  { icon: "📖", label: "Documentation", desc: "Full API reference",          href: "#developers" },
-  { icon: "⚡", label: "Quickstart",    desc: "Up in minutes, not weeks",    href: "#developers" },
-  { icon: "🔒", label: "Security",      desc: "Zero-knowledge vault design", href: "#developers" },
+  { icon: "📖", label: "Documentation", desc: "Full API reference",          href: "/developers/documentation" },
+  { icon: "⚡", label: "Quickstart",    desc: "Up in minutes, not weeks",    href: "/developers/quickstart" },
+  { icon: "🔒", label: "Security",      desc: "Zero-knowledge vault design", href: "/developers/security" },
 ];
 
 const ALL_MOBILE_LINKS = [
   { label: "Products",   children: [...PRODUCTS, ...PHASES] },
   { label: "Use Cases",  children: USE_CASES },
   { label: "Developers", children: DEVS },
-  { label: "Customers",  href: "#customers" },
-  { label: "Pricing",    href: "#pricing" },
-  { label: "Careers",    href: "#careers" },
+  { label: "Customers",  href: "/customers" },
+  { label: "Pricing",    href: "/pricing" },
+  { label: "Careers",    href: "/careers" },
 ];
 
 function DropMenu({ items }: { items: typeof PRODUCTS }) {
+  const [, navigate] = useLocation();
+  const go = (href: string) => { navigate(href); window.scrollTo({ top: 0, behavior: "smooth" }); };
   return (
     <div className="kn-dropdown">
       {items.map((item, i) => (
         <a key={i} href={item.href} className="kn-dropdown-item"
-          onClick={e => { e.preventDefault(); document.querySelector(item.href)?.scrollIntoView({ behavior: "smooth" }); }}>
+          onClick={e => { e.preventDefault(); go(item.href); }}>
           <div className="kn-dropdown-icon">{item.icon}</div>
           <div>
             <div className="kn-dropdown-label">{item.label}</div>
@@ -53,6 +59,7 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openSection, setOpenSection] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [, navigate] = useLocation();
 
   useLayoutEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 900);
@@ -61,8 +68,22 @@ export function Navbar() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const go = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  const go = (path: string) => {
+    if (path.startsWith("#")) {
+      // anchor on current page
+      document.getElementById(path.replace("#", ""))?.scrollIntoView({ behavior: "smooth" });
+    } else if (path === "waitlist") {
+      // scroll to waitlist on home page or navigate home first
+      if (window.location.pathname === "/") {
+        document.getElementById("waitlist")?.scrollIntoView({ behavior: "smooth" });
+      } else {
+        navigate("/");
+        setTimeout(() => document.getElementById("waitlist")?.scrollIntoView({ behavior: "smooth" }), 400);
+      }
+    } else {
+      navigate(path);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
     setMenuOpen(false);
   };
 
@@ -80,7 +101,7 @@ export function Navbar() {
       <nav className="kn-nav">
         <div className="kn-nav-inner">
           {/* Logo */}
-          <a className="kn-nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} style={{ cursor: "pointer" }}>
+          <a className="kn-nav-logo" onClick={() => go("/")} style={{ cursor: "pointer" }}>
             <div style={{ width: 28, height: 28, background: "#0a0a0a", borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M2 11L5 4L8.5 7.5L12 2" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -89,15 +110,15 @@ export function Navbar() {
             RECEKON
           </a>
 
-          {/* Desktop nav links */}
+          {/* Desktop nav */}
           <ul className="kn-nav-links">
             <li>
               <button className="kn-nav-link">Products <span className="kn-nav-caret">▾</span></button>
-              <div className="kn-dropdown" style={{ minWidth: 280 }}>
+              <div className="kn-dropdown" style={{ minWidth: 300 }}>
                 <div style={{ padding: "6px 12px 4px", fontSize: 11, fontWeight: 700, color: "#9ca3af", letterSpacing: "0.08em", textTransform: "uppercase" }}>Core Products</div>
                 {PRODUCTS.map((item, i) => (
                   <a key={i} href={item.href} className="kn-dropdown-item"
-                    onClick={e => { e.preventDefault(); document.querySelector(item.href)?.scrollIntoView({ behavior: "smooth" }); }}>
+                    onClick={e => { e.preventDefault(); go(item.href); }}>
                     <div className="kn-dropdown-icon">{item.icon}</div>
                     <div><div className="kn-dropdown-label">{item.label}</div><div className="kn-dropdown-desc">{item.desc}</div></div>
                   </a>
@@ -106,7 +127,7 @@ export function Navbar() {
                 <div style={{ padding: "4px 12px 4px", fontSize: 11, fontWeight: 700, color: "#9ca3af", letterSpacing: "0.08em", textTransform: "uppercase" }}>Roadmap</div>
                 {PHASES.map((item, i) => (
                   <a key={i} href={item.href} className="kn-dropdown-item"
-                    onClick={e => { e.preventDefault(); document.querySelector(item.href)?.scrollIntoView({ behavior: "smooth" }); }}>
+                    onClick={e => { e.preventDefault(); go(item.href); }}>
                     <div className="kn-dropdown-icon">{item.icon}</div>
                     <div><div className="kn-dropdown-label">{item.label}</div><div className="kn-dropdown-desc">{item.desc}</div></div>
                   </a>
@@ -121,9 +142,9 @@ export function Navbar() {
               <button className="kn-nav-link">Developers <span className="kn-nav-caret">▾</span></button>
               <DropMenu items={DEVS} />
             </li>
-            <li><button className="kn-nav-link" onClick={() => go("customers")}>Customers</button></li>
-            <li><button className="kn-nav-link" onClick={() => go("pricing")}>Pricing</button></li>
-            <li><button className="kn-nav-link" onClick={() => go("careers")}>Careers</button></li>
+            <li><button className="kn-nav-link" onClick={() => go("/customers")}>Customers</button></li>
+            <li><button className="kn-nav-link" onClick={() => go("/pricing")}>Pricing</button></li>
+            <li><button className="kn-nav-link" onClick={() => go("/careers")}>Careers</button></li>
           </ul>
 
           {/* Right actions */}
@@ -134,7 +155,6 @@ export function Navbar() {
                 Get Started <span>›</span>
               </button>
             </>}
-            {/* Hamburger — mobile only */}
             {isMobile && (
               <button
                 onClick={() => setMenuOpen(o => !o)}
@@ -162,7 +182,7 @@ export function Navbar() {
               <div key={i} style={{ borderBottom: "1px solid #f0f0f0" }}>
                 {section.href ? (
                   <button
-                    onClick={() => go(section.href!.replace("#", ""))}
+                    onClick={() => go(section.href!)}
                     style={{ width: "100%", textAlign: "left", padding: "16px 0", fontSize: 17, fontWeight: 600, color: "#0a0a0a", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }}
                   >
                     {section.label}
@@ -181,7 +201,7 @@ export function Navbar() {
                         {section.children?.map((item, j) => (
                           <a key={j}
                             href={item.href}
-                            onClick={e => { e.preventDefault(); document.querySelector(item.href)?.scrollIntoView({ behavior: "smooth" }); setMenuOpen(false); }}
+                            onClick={e => { e.preventDefault(); go(item.href); }}
                             style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", textDecoration: "none" }}
                           >
                             <div style={{ width: 36, height: 36, background: "#f5f5f5", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>{item.icon}</div>

@@ -97,8 +97,9 @@ function ImpactDashboard() {
 
       {/* Tab 0: Breakdown */}
       {tab === 0 && (
-        <div style={{ padding: 18 }}>
+        <div style={{ padding: 18, overflowX: "auto", WebkitOverflowScrolling: "touch" as any }}>
           <div style={{ fontSize: 11, fontWeight: 800, color: "#0a0a0a", letterSpacing: "0.06em", marginBottom: 14, textTransform: "uppercase" as const }}>📊 March Spending Breakdown</div>
+          <div style={{ minWidth: 300 }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 64px 72px 60px", gap: 4, padding: "6px 10px", background: "#f0f0f0", borderRadius: 7, marginBottom: 6 }}>
             {["Category","Spent","Impact","Action"].map((h, i) => (
               <div key={i} style={{ fontSize: 9, fontWeight: 800, color: "#6b7280", textTransform: "uppercase" as const, letterSpacing: "0.07em", textAlign: i > 0 ? "center" as const : "left" as const }}>{h}</div>
@@ -123,6 +124,7 @@ function ImpactDashboard() {
             <div style={{ fontSize: 13, fontWeight: 900, textAlign: "center" as const, fontFamily: "monospace" }}>$1,070</div>
             <div /><div />
           </div>
+          </div>{/* end minWidth wrapper */}
           <div style={{ marginTop: 12, padding: "12px 14px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 10 }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: "#16a34a", marginBottom: 3 }}>🌱 Your impact this month: 142kg CO₂</div>
             <div style={{ fontSize: 11, color: "#374151" }}>≡ Driving 350 miles · ≡ 14 trees absorbing for 1 month</div>

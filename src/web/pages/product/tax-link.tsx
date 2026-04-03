@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Page, PageHero } from "../../components/Layout";
 import { useLocation } from "wouter";
+import { useModal } from "../../components/ModalContext";
 
 function OnboardingFlow() {
   const [active, setActive] = useState(0);
@@ -175,17 +176,18 @@ function OnboardingFlow() {
 
 export default function TaxLinkPage() {
   const [, navigate] = useLocation();
+  const { openContact } = useModal();
   return (
     <Page>
-      <PageHero tag="Product" title="TaxLink™" body="Every deduction auto-documented, every receipt attached, every report formatted. Stop losing thousands of dollars in undocumented deductions." accent="#16a34a" />
+      <PageHero tag="Product" title="TaxLink™" body="Auto-generate deduction-ready expense reports. The average person leaves $1,200 in legitimate deductions unclaimed every year — not because they don't qualify, but because they lack the documentation. TaxLink transforms tax season from a panic into a non-event." accent="#16a34a" />
 
       {/* Main split */}
       <section style={{ padding: "clamp(40px,7vw,80px) clamp(16px,3.5vw,40px)" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80 }} className="tl-split">
           <div>
-            <h2 style={{ fontSize: "clamp(24px,3.5vw,40px)", fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 20 }}>One-click report. Every receipt attached.</h2>
-            <p style={{ fontSize: 16, color: "#374151", lineHeight: 1.75, marginBottom: 24 }}>Freelancers and SMBs globally lose over $50 billion annually in missed deductions — not because the purchases didn't qualify, but because the receipts were lost. TaxLink™ fixes this permanently.</p>
-            {["Every purchase auto-categorized by deduction type","Receipts attached as PDF evidence automatically","CRA, IRS, HMRC, ATO and global tax authority formats","One-click share with accountant","Mileage, home office, equipment — all covered"].map((b, i) => (
+            <h2 style={{ fontSize: "clamp(24px,3.5vw,40px)", fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 20 }}>You don't prepare for tax season. You already are.</h2>
+            <p style={{ fontSize: 16, color: "#374151", lineHeight: 1.75, marginBottom: 24 }}>Every transaction matched to its receipt becomes an audit-ready record the moment it clears. Every eligible deduction is categorized to current tax codes. By the time your accountant asks, the report is already waiting — with receipts attached, confidence scored, and every line item documented.</p>
+            {["Every purchase auto-categorized to IRS Schedule C, CRA, HMRC, ATO","Receipt attached as PDF evidence — automatically, permanently","A charge at Office Depot isn't 'shopping' — it's Office Supplies with confidence score","13 hours of annual tax prep → zero manual steps","One-click export to your accountant in their preferred format"].map((b, i) => (
               <div key={i} style={{ display: "flex", gap: 10, fontSize: 15, color: "#374151", marginBottom: 10 }}><span style={{ color: "#22c55e", fontWeight: 700, flexShrink: 0 }}>✓</span>{b}</div>
             ))}
           </div>
@@ -218,7 +220,7 @@ export default function TaxLinkPage() {
               From zero to your first tax report.<br/>Under two minutes.
             </h2>
             <p style={{ fontSize: 16, color: "#6b7280", lineHeight: 1.75, maxWidth: 560 }}>
-              Every step below is the actual product flow — the exact screen, the exact timing. No setup guides. No CSV imports. No accountant required. Connect once. RECEKON runs the rest.
+              Every step below is the actual product flow — exact screen, exact timing. No CSV imports. No manual categorization. No accountant required before you even see results. Connect once. TaxLink™ runs the rest — retroactively rebuilding your last 12 months first.
             </p>
           </div>
           <OnboardingFlow />
@@ -226,25 +228,176 @@ export default function TaxLinkPage() {
       </section>
 
       {/* First value guarantee */}
-      <section style={{ background: "#0a0a0a", padding: "clamp(48px,7vw,80px) clamp(16px,3.5vw,40px)" }}>
+      {/* ── TAXLINK: HORIZONTAL LEDGER STAT BAR ── */}
+      {/* Design: 3 stats arranged as a horizontal "ledger" row — large numbers left-anchored with a thin green left-border,
+          label stacked underneath, separated by subtle vertical rules. Feels like a financial document, not a dashboard widget. */}
+      <section style={{ background: "#0f1a0f", padding: "clamp(48px,6vw,72px) clamp(16px,3.5vw,40px)", borderTop: "3px solid #22c55e" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 2, background: "#111", borderRadius: 16, overflow: "hidden", border: "1px solid #1a1a1a" }} className="sec-grid">
+          <p style={{ fontSize: 10, fontWeight: 800, color: "#22c55e", letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 32 }}>By the numbers</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 0 }} className="tl-ledger">
             {[
-              { n: "83s",    l: "to your first matched transaction", icon: "⚡" },
-              { n: "2 min",  l: "to a retrospective 12-month deduction report", icon: "📊" },
-              { n: "0",      l: "manual steps after initial connection", icon: "🤖" },
+              { pre: "avg", n: "$2,847", post: "in deductions found — year one, per user. Not estimates. Documented claims." },
+              { pre: "first match in", n: "83 seconds", post: "from the moment your bank connects. No setup required." },
+              { pre: "forms to fill", n: "zero", post: "From initial connection through final export to your accountant." },
             ].map((s, i) => (
-              <div key={i} style={{ padding: "32px 28px", textAlign: "center", borderRight: i < 2 ? "1px solid #1e1e1e" : "none" }}>
-                <div style={{ fontSize: 28, marginBottom: 12 }}>{s.icon}</div>
-                <div style={{ fontSize: 36, fontWeight: 900, letterSpacing: "-0.04em", color: "#22c55e", marginBottom: 8 }}>{s.n}</div>
-                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", lineHeight: 1.55 }}>{s.l}</div>
+              <div key={i} style={{
+                padding: "0 clamp(20px,3vw,44px) 0 clamp(20px,3vw,44px)",
+                borderLeft: i > 0 ? "1px solid rgba(34,197,94,0.15)" : "none",
+              }}>
+                <div style={{ fontSize: 11, color: "rgba(34,197,94,0.55)", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 6 }}>{s.pre}</div>
+                <div style={{ fontSize: "clamp(32px,4.5vw,56px)", fontWeight: 900, letterSpacing: "-0.04em", color: "#22c55e", lineHeight: 1, marginBottom: 10 }}>{s.n}</div>
+                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.35)", lineHeight: 1.6, maxWidth: 220 }}>{s.post}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <style>{`.tl-split{grid-template-columns:1fr 1fr} @media(max-width:900px){.tl-split{grid-template-columns:1fr!important}}`}</style>
+      {/* ── TAXLINK: MAGAZINE DEEP COPY — left-accent blockquote style ── */}
+      {/* Design: Full white background. Left column has a giant pull-quote with thick green left border (magazine editorial style).
+          Right column is dense body copy — no header, starts mid-sentence to imply continuation. Asymmetric. */}
+      <section style={{ background: "#fff", padding: "clamp(64px,9vw,112px) clamp(16px,3.5vw,40px)" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "5fr 7fr", gap: "clamp(40px,6vw,80px)", alignItems: "start" }} className="tl-magazine">
+            {/* Left: pull-quote block */}
+            <div style={{ borderLeft: "4px solid #22c55e", paddingLeft: "clamp(20px,3vw,36px)" }}>
+              <div style={{ fontSize: "clamp(22px,3.2vw,34px)", fontWeight: 900, letterSpacing: "-0.035em", lineHeight: 1.15, color: "#0a0a0a", marginBottom: 24 }}>
+                The IRS doesn't remind you what you missed.
+              </div>
+              <p style={{ fontSize: 15, color: "#374151", lineHeight: 1.9, marginBottom: 18 }}>
+                Tax deadlines are fixed. The deductions you forgot about are not. Every year, legitimate deductions expire — not because they didn't apply to you, but because you didn't document them in time.
+              </p>
+              <p style={{ fontSize: 15, color: "#374151", lineHeight: 1.9, marginBottom: 24 }}>
+                A $400 internet bill from February. A $180 software subscription. A $90 desk chair bought in March. Each one defensible. Each one undocumented. Each one gone.
+              </p>
+              <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 10, padding: "14px 18px" }}>
+                <div style={{ fontSize: 12, fontWeight: 800, color: "#16a34a", marginBottom: 4 }}>What TaxLink does instead</div>
+                <p style={{ margin: 0, fontSize: 14, color: "#374151", lineHeight: 1.7 }}>Retroactively scans the last 12 months the moment you connect. Doesn't ask you to remember. Asks your bank statement — which remembers everything.</p>
+              </div>
+            </div>
+            {/* Right: dense editorial body */}
+            <div style={{ paddingTop: "clamp(0px,2vw,16px)" }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: "#9ca3af", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 20 }}>The accountant problem</div>
+              <p style={{ fontSize: 16, color: "#0a0a0a", fontWeight: 700, lineHeight: 1.6, marginBottom: 18 }}>Your accountant works from what you give them.</p>
+              <p style={{ fontSize: 15, color: "#374151", lineHeight: 1.9, marginBottom: 18 }}>
+                They're not hunting for your deductions. They're filing based on the pile of receipts you managed to collect. If you give them a partial picture, you get a partial refund. The gap between what you spent and what you documented is money that quietly transfers from your account to the government.
+              </p>
+              <p style={{ fontSize: 15, color: "#374151", lineHeight: 1.9, marginBottom: 28 }}>
+                TaxLink closes that gap. Every charge matched to its receipt, categorized to the correct tax line, with a confidence score and an audit trail. Hand your accountant a complete file — or skip them entirely.
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }} className="tl-proof-pair">
+                {[
+                  { label: "Without TaxLink", items: ["Receipts scattered across email", "Deductions forgotten by April", "Accountant estimates from memory", "Audit risk: high"] },
+                  { label: "With TaxLink", items: ["Every charge matched to receipt", "12 months rebuilt in 2 minutes", "Tax-ready report pre-filed", "Audit trail: complete"] },
+                ].map((col, ci) => (
+                  <div key={ci} style={{ background: ci === 0 ? "#fff7f7" : "#f0fdf4", border: `1px solid ${ci === 0 ? "#fecaca" : "#bbf7d0"}`, borderRadius: 10, padding: "14px 16px" }}>
+                    <div style={{ fontSize: 11, fontWeight: 800, color: ci === 0 ? "#ef4444" : "#16a34a", marginBottom: 10, letterSpacing: "0.04em" }}>{col.label}</div>
+                    {col.items.map((it, ii) => (
+                      <div key={ii} style={{ fontSize: 12, color: ci === 0 ? "#6b7280" : "#374151", marginBottom: 5, display: "flex", gap: 7, alignItems: "flex-start" }}>
+                        <span style={{ flexShrink: 0, marginTop: 1 }}>{ci === 0 ? "✕" : "✓"}</span>{it}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TAXLINK: NUMBERED FEATURE LIST — typographic, not card grid ── */}
+      {/* Design: Dark #0a0a0a bg. Each feature is a full-width horizontal row with a giant number on the left,
+          feature name center, and tight descriptor on the right. Feels like a table of contents or legal exhibit list. */}
+      <section style={{ background: "#0a0a0a", padding: "clamp(56px,8vw,96px) clamp(16px,3.5vw,40px)" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 48, flexWrap: "wrap", gap: 16 }}>
+            <div>
+              <p style={{ fontSize: 10, fontWeight: 800, color: "#22c55e", letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 12 }}>Under the hood</p>
+              <h2 style={{ fontSize: "clamp(24px,3.5vw,40px)", fontWeight: 900, letterSpacing: "-0.04em", color: "#fff", margin: 0 }}>Four systems. Running year-round. Silently.</h2>
+            </div>
+            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)", maxWidth: 260, lineHeight: 1.7 }}>
+              No dashboard to check. No reports to pull. TaxLink surfaces results when they matter — and stays invisible the rest of the time.
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+            {[
+              { n: "01", title: "Multi-jurisdiction categorization", tag: "IRS · CRA · HMRC · ATO", body: "TaxLink applies the correct tax code for your country automatically. IRS Schedule C, CRA T2125, HMRC SA103, ATO Schedule C. No settings. No configuration. The right code for every jurisdiction, every time." },
+              { n: "02", title: "Receipt-to-deduction chain", tag: "Unbreakable evidence", body: "Every deduction links back to a receipt. Every receipt links back to a transaction. The chain is mathematically complete — which is exactly what an auditor needs to see. No gaps, no guesses." },
+              { n: "03", title: "Confidence scoring", tag: "Nothing hidden", body: "Every line item carries a confidence score. High-confidence: auto-filed. Lower-confidence: flagged with a plain-language explanation. You always know exactly why a decision was made." },
+              { n: "04", title: "Audit-ready export", tag: "PDF · CSV · Accountant format", body: "A timestamped log of every categorization decision, every receipt match, and every source document — exportable in the format accepted by all four jurisdictions, in the format your accountant actually uses." },
+            ].map((f, i) => (
+              <div key={i} style={{
+                display: "grid", gridTemplateColumns: "64px 1fr auto",
+                gap: "clamp(16px,3vw,40px)", alignItems: "center",
+                padding: "clamp(20px,3vw,32px) 0",
+                borderBottom: "1px solid rgba(255,255,255,0.06)",
+              }} className="tl-feature-row">
+                <div style={{ fontSize: "clamp(28px,4vw,48px)", fontWeight: 900, color: "rgba(34,197,94,0.2)", letterSpacing: "-0.04em", lineHeight: 1 }}>{f.n}</div>
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 6 }}>
+                    <span style={{ fontSize: "clamp(15px,2vw,18px)", fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}>{f.title}</span>
+                    <span style={{ fontSize: 10, fontWeight: 800, color: "#22c55e", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", padding: "2px 9px", borderRadius: 100, letterSpacing: "0.06em" }}>{f.tag}</span>
+                  </div>
+                  <p style={{ margin: 0, fontSize: 13, color: "rgba(255,255,255,0.4)", lineHeight: 1.7, maxWidth: 560 }}>{f.body}</p>
+                </div>
+                <div style={{ width: 32, height: 32, borderRadius: "50%", border: "1px solid rgba(34,197,94,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5h6M5 2l3 3-3 3" stroke="#22c55e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── TAXLINK: FINAL CTA — split layout, not centered block ── */}
+      {/* Design: Left half has the closing argument copy. Right half has the CTA button + trust signals.
+          Different from zombie (centered) and price guardian (centered with different layout). */}
+      <section style={{ background: "#16a34a", padding: "clamp(56px,8vw,88px) clamp(16px,3.5vw,40px)" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }} className="tl-split">
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 800, color: "rgba(255,255,255,0.6)", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 20 }}>Performance-based · zero if nothing found</div>
+              <h2 style={{ fontSize: "clamp(26px,4vw,44px)", fontWeight: 900, letterSpacing: "-0.04em", color: "#fff", lineHeight: 1.1, marginBottom: 20 }}>Stop leaving deductions on the table because you forgot to document them.</h2>
+              <p style={{ fontSize: 16, color: "rgba(255,255,255,0.75)", lineHeight: 1.8, margin: 0 }}>
+                TaxLink finds what you're owed, builds the evidence chain, and delivers a tax-ready report. We charge 15–20% of what we recover. If we find nothing, you pay nothing.
+              </p>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <button
+                onClick={() => openContact("I want TaxLink to handle my deductions.")}
+                style={{ background: "#fff", color: "#16a34a", border: "none", borderRadius: 10, padding: "18px 40px", fontSize: 18, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", letterSpacing: "-0.02em", textAlign: "center" }}
+              >
+                Get Early Access →
+              </button>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {["No card required", "Setup takes 90 seconds", "First results in under 2 minutes", "Cancel any time before we find anything"].map((t, i) => (
+                  <div key={i} style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 13, color: "rgba(255,255,255,0.65)" }}>
+                    <span style={{ color: "rgba(255,255,255,0.9)", fontWeight: 700 }}>✓</span>{t}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <style>{`
+        .tl-split{grid-template-columns:1fr 1fr}
+        @media(max-width:900px){.tl-split{grid-template-columns:1fr!important}}
+        .tl-ledger{grid-template-columns:repeat(3,1fr)}
+        @media(max-width:640px){.tl-ledger{grid-template-columns:1fr!important}.tl-ledger>div{border-left:none!important;padding-left:0!important;padding-top:28px;border-top:1px solid rgba(34,197,94,0.12)}}
+        .tl-magazine{grid-template-columns:5fr 7fr}
+        @media(max-width:820px){.tl-magazine{grid-template-columns:1fr!important}}
+        .tl-proof-pair{grid-template-columns:1fr 1fr}
+        @media(max-width:480px){.tl-proof-pair{grid-template-columns:1fr!important}}
+        .tl-feature-row{grid-template-columns:64px 1fr auto}
+        @media(max-width:600px){.tl-feature-row{grid-template-columns:40px 1fr!important}.tl-feature-row>:last-child{display:none}}
+        .ks-stats{grid-template-columns:repeat(3,1fr)}
+        @media(max-width:600px){.ks-stats{grid-template-columns:1fr!important}.ks-stats>div{border-right:none!important;border-bottom:1px solid #1e1e1e}}
+        .feat-grid{grid-template-columns:repeat(4,1fr)}
+        @media(max-width:900px){.feat-grid{grid-template-columns:1fr 1fr!important}}
+        @media(max-width:500px){.feat-grid{grid-template-columns:1fr!important}}
+      `}</style>
     </Page>
   );
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Page } from "../../components/Layout";
 import { useLocation } from "wouter";
+import { useModal } from "../../components/ModalContext";
 
 function KillFeed() {
   const [killed, setKilled] = useState<number[]>([]);
@@ -123,6 +124,7 @@ function ExecutionTimeline() {
 
 export default function ZombieUseCasePage() {
   const [, navigate] = useLocation();
+  const { openContact } = useModal();
   return (
     <Page>
       {/* Hero */}
@@ -159,7 +161,7 @@ export default function ZombieUseCasePage() {
                   </div>
                 ))}
               </div>
-              <button onClick={() => navigate("/#waitlist")}
+              <button onClick={() => openContact("I want Zombie Detector to find what I'm leaking.")}
                 style={{ background: "#ef4444", color: "#fff", border: "none", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
                 Get early access →
               </button>

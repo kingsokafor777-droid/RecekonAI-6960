@@ -86,7 +86,7 @@ export default function SecurityPage() {
                 We can't see your users' data.<br/><span style={{ color: "#22c55e" }}>By design.</span>
               </h1>
               <p style={{ fontSize: 17, color: "rgba(255,255,255,0.5)", lineHeight: 1.8, maxWidth: 480 }}>
-                Zero-knowledge architecture isn't a marketing claim. It's a structural constraint. Even a full compromise of RECEKON's database exposes no user credentials, no PII, and no financial access tokens.
+                We didn't ask "how much security can we afford?" We asked: what would security look like if we assumed every system would eventually be compromised? The result is an architecture that protects your data even when our systems are breached — because the keys only exist with the user.
               </p>
             </div>
 
@@ -116,7 +116,7 @@ export default function SecurityPage() {
             Four principles that can't be negotiated.
           </h2>
           <p style={{ fontSize: 16, color: "#6b7280", lineHeight: 1.75, maxWidth: 520, marginBottom: 48 }}>
-            Security at RECEKON isn't a policy. It's a system property. These constraints are enforced at the architecture level — not by procedure, not by training.
+            Traditional security relies on trust: trust the provider won't abuse access, trust employees won't steal data, trust the legal system will protect your rights. We replaced trust with mathematics. These four constraints are enforced cryptographically — not by policy, not by procedure.
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }} className="feat-grid">
             {PRINCIPLES.map((p, i) => (
@@ -143,7 +143,7 @@ export default function SecurityPage() {
             Official APIs only.<br/>No IMAP. No app passwords.
           </h2>
           <p style={{ fontSize: 15, color: "rgba(255,255,255,0.5)", lineHeight: 1.8, maxWidth: 540, marginBottom: 48 }}>
-            RECEKON integrates exclusively through Gmail API and Microsoft Graph API — the same OAuth-based APIs that Google and Microsoft themselves maintain and monetize. Not IMAP. Not app passwords. Not legacy protocols that can be shut down overnight.
+            Many financial apps still use IMAP — a 1986 protocol that requires storing passwords in plaintext and grants unrestricted inbox access. We rejected this entirely. RECEKON uses OAuth APIs from Google and Microsoft: fine-grained permission scopes, token revocation, and a clear consent screen that tells users exactly what we can access. We request read access to emails from known receipt domains. Nothing else. Revoke anytime.
           </p>
 
           <div style={{ position: "relative" }}>
@@ -347,7 +347,7 @@ export default function SecurityPage() {
             Found a vulnerability?
           </h2>
           <p style={{ fontSize: 15, color: "rgba(255,255,255,0.5)", lineHeight: 1.8, marginBottom: 32 }}>
-            We run a responsible disclosure program. If you've found a security issue in RECEKON's infrastructure, API, or SDKs — we want to know. We respond within 24 hours. We pay for critical findings.
+            We run a responsible disclosure program. Security is not a feature we added to a product — it is the product. If you find an issue in RECEKON's infrastructure, API, or SDKs, we want to know. We respond within 24 hours. We pay for critical findings. Every fix is verified. Every remediation is documented.
           </p>
           <a href="mailto:security@recekon.com"
             style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#fff", color: "#0a0a0a", borderRadius: 10, padding: "13px 24px", fontSize: 14, fontWeight: 700, textDecoration: "none", letterSpacing: "-0.01em" }}>

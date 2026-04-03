@@ -143,14 +143,14 @@ export function ContactModal({ open, onClose, defaultMessage = "" }: ContactModa
               <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: "-0.03em", color: "#fff" }}>RECEKON</span>
             </div>
 
-            <h2 style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.03em", color: "#fff", lineHeight: 1.2, marginBottom: 12 }}>
+            <h2 className="contact-modal-header-text" style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.03em", color: "#fff", lineHeight: 1.2, marginBottom: 12 }}>
               See RECEKON in action
             </h2>
             <p style={{ fontSize: 14, color: "rgba(255,255,255,0.55)", lineHeight: 1.7, marginBottom: 28 }}>
               Our team can help you find the right solution. Complete the form and we'll get in touch shortly.
             </p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div className="contact-modal-bullets" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {bullets.map((b, i) => (
                 <div key={i} style={{
                   display: "flex", alignItems: "flex-start", gap: 12,
@@ -328,9 +328,17 @@ export function ContactModal({ open, onClose, defaultMessage = "" }: ContactModa
         .form-cols { grid-template-columns: 1fr 1fr; }
         @media(max-width:700px) {
           .contact-modal-grid { grid-template-columns: 1fr !important; }
-          .contact-modal-grid > div:first-child { border-radius: 20px 20px 0 0 !important; }
+          .contact-modal-grid > div:first-child {
+            border-radius: 20px 20px 0 0 !important;
+            min-height: auto !important;
+            padding: 24px 20px !important;
+          }
           .contact-modal-grid > div:last-child  { border-radius: 0 0 20px 20px !important; }
           .form-cols { grid-template-columns: 1fr !important; }
+          /* Hide bullet list on mobile to save space */
+          .contact-modal-bullets { display: none !important; }
+          /* Compact header on mobile */
+          .contact-modal-header-text { margin-bottom: 8px !important; }
         }
       `}</style>
     </div>

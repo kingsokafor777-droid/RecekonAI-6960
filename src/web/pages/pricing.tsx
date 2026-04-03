@@ -1,8 +1,10 @@
 import { useLocation } from "wouter";
 import { Page } from "../components/Layout";
+import { useModal } from "../components/ModalContext";
 
 export default function PricingPage() {
   const [, navigate] = useLocation();
+  const { openContact } = useModal();
   const plans = [
     { name:"Free", price:"$0", period:"forever", desc:"Get started. See what you're losing.", featured:false, cta:"Get Started",
       features:["Bank account connection","5 receipt matches/month","Zombie subscription scan","Basic spending dashboard"] },
@@ -43,7 +45,7 @@ export default function PricingPage() {
                   </div>
                   <p style={{ fontSize:14,color:plan.featured?"rgba(255,255,255,0.6)":"#6b7280" }}>{plan.desc}</p>
                 </div>
-                <button onClick={() => navigate("/#waitlist")}
+                <button onClick={() => openContact("I'd like to get started with RECEKON.")}
                   style={{ width:"100%",padding:"12px",borderRadius:8,fontFamily:"inherit",fontWeight:700,fontSize:14,cursor:"pointer",marginBottom:24,
                     background:plan.featured?"#fff":"#0a0a0a",color:plan.featured?"#0a0a0a":"#fff",border:"none",transition:"all 0.15s" }}>
                   {plan.cta} →

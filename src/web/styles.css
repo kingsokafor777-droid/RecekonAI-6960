@@ -660,7 +660,7 @@ img, video, canvas { max-width: 100%; height: auto; }
   canvas { max-height: 280px !important; }
 
   /* ── Announcement bar text ── */
-  .kn-announce { font-size: 11px !important; padding: 9px 36px 9px 12px !important; }
+  .kn-announce { font-size: 11px !important; padding: 9px 36px 9px 12px !important; white-space: normal !important; flex-wrap: wrap !important; }
 
   /* ── Nav: hide logo text abbreviation fix ── */
   .sutur-nav-links { display: none !important; }
@@ -721,13 +721,17 @@ img, video, canvas { max-width: 100%; height: auto; }
     width: 100% !important;
   }
 
-  /* Announcement bar */
+  /* Announcement bar — allow wrap so CTA stays visible */
   .kn-announce {
     font-size: 11px !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
     padding: 9px 40px 9px 12px !important;
+    flex-wrap: wrap !important;
+    text-align: left !important;
+    justify-content: flex-start !important;
+    line-height: 1.5 !important;
   }
 
   /* Buttons */

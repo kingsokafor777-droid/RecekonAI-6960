@@ -6,7 +6,7 @@ const STEPS = [
   {
     n: "01",
     title: "Get your API key",
-    desc: "Create a RECEKON account and generate an API key from the dashboard. Keys are scoped — issue one per environment.",
+    desc: "Create a free account — no credit card, no sales call, no long-term commitments. Generate an API key in the dashboard. Keys are scoped: one per environment, read-only by default, expandable as you grow.",
     code: `# Set your key once
 export RECEKON_API_KEY="rk_live_..."
 
@@ -48,7 +48,7 @@ const recekon = new Recekon({
   {
     n: "04",
     title: "Register a webhook",
-    desc: "Tell RECEKON where to send events. You choose which event types you care about.",
+    desc: "Tell RECEKON where to push events. Choose exactly which types you want. When a transaction matches, you receive the full atomic payload — transaction, receipt, SKUs, confidence — immediately. No follow-up calls.",
     code: `const webhook = await recekon.webhooks.register({
   url: 'https://your-api.com/hooks/recekon',
   events: [
@@ -68,7 +68,7 @@ console.log('Webhook active:', webhook.id);
   {
     n: "05",
     title: "Handle the first event",
-    desc: "Set up an endpoint in your backend to receive and verify payloads. Verification is one function call.",
+    desc: "Set up a handler in your backend. Verify the signature in one call — no crypto boilerplate. Parse the event type. Act. The pattern is identical for every event type you'll ever handle.",
     code: `// Express route
 app.post('/hooks/recekon', express.raw({ type: '*/*' }), (req, res) => {
 
@@ -146,10 +146,10 @@ export default function QuickstartPage() {
                 <span style={{ fontSize: 11, fontWeight: 700, color: "#f5c518", letterSpacing: "0.08em", textTransform: "uppercase" }}>10-minute integration</span>
               </div>
               <h1 style={{ fontSize: "clamp(36px,4.5vw,58px)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.05, color: "#fff", marginBottom: 20 }}>
-                Zero to live.<br/><span style={{ color: "#f5c518" }}>In 10 minutes.</span>
+                Zero to autonomous.<br/><span style={{ color: "#f5c518" }}>600 seconds.</span>
               </h1>
               <p style={{ fontSize: 17, color: "rgba(255,255,255,0.5)", lineHeight: 1.8, maxWidth: 480, marginBottom: 0 }}>
-                Six steps. No infrastructure changes. No compliance forms. Connect RECEKON to your existing backend and get SKU-level financial intelligence in your product today.
+                We rejected the integration nightmare. No seventeen dependencies. No version conflicts. No sales call before you can evaluate. Six steps from zero to live financial intelligence — complexity only reveals itself when you need it.
               </p>
             </div>
 
@@ -262,10 +262,10 @@ export default function QuickstartPage() {
       <section style={{ background: "#f9f9f9", padding: "clamp(56px,7vw,96px) clamp(16px,3.5vw,40px)" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", textAlign: "center" }}>
           <h2 style={{ fontSize: "clamp(28px,3.5vw,44px)", fontWeight: 800, letterSpacing: "-0.025em", color: "#0a0a0a", marginBottom: 12 }}>
-            What your users get on day one.
+            The quickstart is production-ready.
           </h2>
-          <p style={{ fontSize: 16, color: "#6b7280", lineHeight: 1.75, maxWidth: 480, margin: "0 auto 48px" }}>
-            One integration. Every financial intelligence layer unlocked.
+          <p style={{ fontSize: 16, color: "#6b7280", lineHeight: 1.75, maxWidth: 520, margin: "0 auto 48px" }}>
+            Not a simplified demo. Every pattern you learn in the first ten minutes applies to your most complex use cases. Complexity emerges from necessity — not from poor design.
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }} className="feat-grid">
             {[

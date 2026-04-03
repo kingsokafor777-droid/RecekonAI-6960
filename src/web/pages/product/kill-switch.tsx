@@ -83,6 +83,256 @@ function KillSwitchDemo() {
   );
 }
 
+const STEPS = [
+  { t: "Bank connected via Plaid",      d: "Read-only OAuth. No passwords stored. 30 seconds from tap to connected.",                                                                           icon: "🏦", color: "#3b82f6", tag: "30 seconds",  n: "00:00" },
+  { t: "Kill Switch™ scans immediately", d: "The moment your bank is linked, Kill Switch™ begins scanning all recurring charges — no configuration needed.",                                    icon: "🔍", color: "#f59e0b", tag: "42 seconds",  n: "00:42" },
+  { t: "Zombies surface",               d: "Within 68 seconds, RECEKON shows every subscription you're being charged — sorted by last-used date. Most users see at least 4 they'd forgotten.", icon: "⛔", color: "#ef4444", tag: "68 seconds",  n: "01:08" },
+  { t: "One tap to cancel",             d: "Tap 'Cancel'. Kill Switch™ sends the cancellation request via the merchant's official API. No login. No hold music. Confirmation in seconds.",    icon: "✓",  color: "#22c55e", tag: "91 seconds",  n: "01:31" },
+  { t: "First cancellation confirmed",  d: "111 seconds from opening RECEKON to a confirmed cancellation receipt in your vault. The subscription cannot renew.",                               icon: "🎉", color: "#22c55e", tag: "111 seconds", n: "01:51" },
+];
+
+function KillSwitchTimeline() {
+  const [active, setActive]       = useState(0);
+  const [mouse, setMouse]         = useState({ x: 0, y: 0 });
+  const [hovered, setHovered]     = useState<number | null>(null);
+  const [progress, setProgress]   = useState(0);
+  const [paused, setPaused]       = useState(false);
+  const sectionRef                = useRef<HTMLDivElement>(null);
+  const timerRef                  = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Auto-advance every 2.8s
+  useEffect(() => {
+    if (paused) return;
+    timerRef.current = setInterval(() => {
+      setActive(a => (a + 1) % STEPS.length);
+      setProgress(0);
+    }, 2800);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [paused]);
+
+  // Progress bar tick
+  useEffect(() => {
+    if (paused) return;
+    const t = setInterval(() => setProgress(p => Math.min(p + 1, 100)), 28);
+    return () => clearInterval(t);
+  }, [active, paused]);
+
+  // Mouse tilt on section
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const rect = sectionRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = ((e.clientX - rect.left) / rect.width  - 0.5) * 2;
+    const y = ((e.clientY - rect.top)  / rect.height - 0.5) * 2;
+    setMouse({ x, y });
+  };
+
+  const step = STEPS[active];
+
+  return (
+    <section
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => setMouse({ x: 0, y: 0 })}
+      style={{ background: "#0a0a0a", padding: "clamp(64px,9vw,112px) clamp(16px,3.5vw,40px)", overflow: "hidden" }}
+    >
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+        {/* Header */}
+        <div style={{ textAlign: "center", marginBottom: 64 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 14 }}>First use</p>
+          <h2 style={{ fontSize: "clamp(26px,3.5vw,46px)", fontWeight: 800, letterSpacing: "-0.03em", color: "#fff", marginBottom: 14, lineHeight: 1.05 }}>
+            First connection to first cancellation.<br/><span style={{ color: "#22c55e" }}>Under three minutes.</span>
+          </h2>
+          <p style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", lineHeight: 1.75, maxWidth: 500, margin: "0 auto" }}>
+            This is the exact sequence. No tutorial. No setup checklist. The value appears before most apps finish loading.
+          </p>
+        </div>
+
+        {/* 3D card stage */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }} className="ks-tl-split">
+
+          {/* Left: step list */}
+          <div className="ks-tl-steplist" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {STEPS.map((s, i) => {
+              const isActive = i === active;
+              const isDone   = i < active;
+              return (
+                <div
+                  key={i}
+                  onClick={() => { setActive(i); setProgress(0); setPaused(true); }}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 14,
+                    padding: "14px 18px", borderRadius: 14, cursor: "pointer",
+                    background: isActive ? "rgba(255,255,255,0.06)" : "transparent",
+                    border: `1px solid ${isActive ? "rgba(255,255,255,0.12)" : "transparent"}`,
+                    transition: "all 0.25s ease",
+                    transform: isActive ? "translateX(4px)" : "translateX(0)",
+                  }}
+                >
+                  {/* Icon bubble */}
+                  <div style={{
+                    width: 44, height: 44, borderRadius: "50%", flexShrink: 0,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 18,
+                    background: isDone ? `${s.color}20` : isActive ? `${s.color}18` : "rgba(255,255,255,0.04)",
+                    border: `2px solid ${isDone || isActive ? s.color + "50" : "rgba(255,255,255,0.08)"}`,
+                    boxShadow: isActive ? `0 0 16px ${s.color}30` : "none",
+                    transition: "all 0.3s ease",
+                  }}>
+                    {isDone ? <span style={{ fontSize: 14, color: s.color, fontWeight: 900 }}>✓</span> : s.icon}
+                  </div>
+
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
+                      <span style={{ fontSize: 13, fontWeight: 800, color: isActive ? "#fff" : isDone ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.35)", transition: "color 0.2s" }}>{s.t}</span>
+                      <code style={{ fontSize: 9, fontWeight: 800, color: s.color, background: `${s.color}15`, padding: "2px 7px", borderRadius: 4, flexShrink: 0 }}>{s.tag}</code>
+                    </div>
+                    {/* Progress bar on active */}
+                    {isActive && !paused && (
+                      <div style={{ height: 2, background: "rgba(255,255,255,0.08)", borderRadius: 1, overflow: "hidden", marginTop: 4 }}>
+                        <div style={{ height: "100%", width: `${progress}%`, background: s.color, borderRadius: 1, transition: "width 0.03s linear" }} />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Connector dot */}
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: isActive ? s.color : isDone ? `${s.color}60` : "rgba(255,255,255,0.1)", boxShadow: isActive ? `0 0 8px ${s.color}` : "none", transition: "all 0.3s", flexShrink: 0 }} />
+                </div>
+              );
+            })}
+
+            {/* Pause / resume */}
+            <button
+              onClick={() => setPaused(p => !p)}
+              style={{ marginTop: 8, alignSelf: "flex-start", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "7px 14px", fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.4)", cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.04em" }}
+            >
+              {paused ? "▶ Resume" : "⏸ Pause"}
+            </button>
+          </div>
+
+          {/* Right: 3D floating card */}
+          <div
+            className="ks-tl-card"
+            style={{
+              perspective: "900px",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}
+          >
+            <div
+              style={{
+                transform: `rotateY(${mouse.x * 10}deg) rotateX(${-mouse.y * 7}deg) translateZ(0)`,
+                transition: "transform 0.12s ease-out",
+                transformStyle: "preserve-3d",
+                width: "100%",
+                maxWidth: 420,
+              }}
+            >
+              {/* Main 3D card */}
+              <div style={{
+                background: "linear-gradient(135deg, #111 0%, #0d0d0d 100%)",
+                border: `1px solid ${step.color}30`,
+                borderRadius: 24,
+                padding: "36px 32px",
+                boxShadow: `0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 60px ${step.color}15`,
+                position: "relative",
+                overflow: "hidden",
+                transformStyle: "preserve-3d",
+                transition: "border-color 0.4s ease, box-shadow 0.4s ease",
+              }}>
+
+                {/* Glow orb behind */}
+                <div style={{
+                  position: "absolute", top: -60, right: -60,
+                  width: 200, height: 200, borderRadius: "50%",
+                  background: `radial-gradient(circle, ${step.color}25 0%, transparent 70%)`,
+                  pointerEvents: "none",
+                  transition: "background 0.4s ease",
+                }} />
+
+                {/* Step counter */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
+                  <div style={{ display: "flex", gap: 6 }}>
+                    {STEPS.map((_, i) => (
+                      <div key={i} style={{
+                        width: i === active ? 20 : 6, height: 6, borderRadius: 3,
+                        background: i === active ? step.color : i < active ? `${STEPS[i].color}50` : "rgba(255,255,255,0.1)",
+                        transition: "all 0.3s ease",
+                      }} />
+                    ))}
+                  </div>
+                  <code style={{ fontSize: 11, fontWeight: 800, color: "rgba(255,255,255,0.25)", fontFamily: "monospace" }}>{step.n}</code>
+                </div>
+
+                {/* Icon */}
+                <div style={{
+                  width: 72, height: 72, borderRadius: 20, marginBottom: 24,
+                  background: `${step.color}15`,
+                  border: `2px solid ${step.color}35`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 32,
+                  boxShadow: `0 8px 32px ${step.color}20`,
+                  transition: "all 0.4s ease",
+                  transform: "translateZ(20px)",
+                }}>
+                  {step.icon}
+                </div>
+
+                {/* Title */}
+                <div style={{ transform: "translateZ(10px)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+                    <h3 style={{ margin: 0, fontSize: "clamp(16px,2vw,22px)", fontWeight: 800, letterSpacing: "-0.02em", color: "#fff" }}>{step.t}</h3>
+                  </div>
+                  <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: `${step.color}15`, border: `1px solid ${step.color}30`, borderRadius: 100, padding: "4px 12px", marginBottom: 20 }}>
+                    <div style={{ width: 5, height: 5, borderRadius: "50%", background: step.color, animation: "recekonDot 1.5s infinite" }} />
+                    <span style={{ fontSize: 10, fontWeight: 800, color: step.color, letterSpacing: "0.06em", textTransform: "uppercase" }}>{step.tag}</span>
+                  </div>
+                  <p style={{ margin: 0, fontSize: 14, color: "rgba(255,255,255,0.5)", lineHeight: 1.75 }}>{step.d}</p>
+                </div>
+
+                {/* Bottom edge shine */}
+                <div style={{
+                  position: "absolute", bottom: 0, left: 0, right: 0, height: 2,
+                  background: `linear-gradient(90deg, transparent, ${step.color}60, transparent)`,
+                  transition: "background 0.4s ease",
+                }} />
+              </div>
+
+              {/* Shadow plane */}
+              <div style={{
+                height: 24, margin: "0 24px",
+                background: `radial-gradient(ellipse at center, ${step.color}20 0%, transparent 70%)`,
+                borderRadius: "50%",
+                filter: "blur(8px)",
+                transition: "background 0.4s ease",
+              }} />
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div style={{ marginTop: 64, background: "#111", border: "1px solid #1e1e1e", borderRadius: 16, padding: "24px 32px", display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }} className="ks-tl-bottom">
+          <div style={{ fontSize: 36 }}>⚡</div>
+          <div>
+            <div style={{ fontSize: 17, fontWeight: 800, color: "#fff", marginBottom: 4 }}>111 seconds. First zombie killed.</div>
+            <p style={{ margin: 0, fontSize: 14, color: "rgba(255,255,255,0.4)", lineHeight: 1.7 }}>No tutorial. No setup wizard. No CSV to upload. The product is the onboarding — because value this immediate needs no explanation.</p>
+          </div>
+        </div>
+      </div>
+      <style>{`
+        .ks-tl-split { grid-template-columns: 1fr 1fr; }
+        .ks-tl-steplist { order: 1; }
+        .ks-tl-card { order: 2; }
+        @media (max-width: 768px) {
+          .ks-tl-split { grid-template-columns: 1fr !important; }
+          .ks-tl-bottom { padding: 20px 20px !important; }
+          /* Show 3D card first on mobile — visual proof before steps */
+          .ks-tl-steplist { order: 2 !important; }
+          .ks-tl-card { order: 1 !important; }
+        }
+      `}</style>
+    </section>
+  );
+}
+
 export default function KillSwitchPage() {
   const { openContact } = useModal();
   const [killed, setKilled] = useState<number[]>([]);
@@ -199,48 +449,8 @@ export default function KillSwitchPage() {
         </div>
       </section>
 
-      {/* Onboarding flow */}
-      <section style={{ background: "#f9f9f9", padding: "clamp(56px,8vw,96px) clamp(16px,3.5vw,40px)" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 14 }}>First use</p>
-          <h2 style={{ fontSize: "clamp(26px,3.5vw,42px)", fontWeight: 800, letterSpacing: "-0.025em", color: "#0a0a0a", marginBottom: 14 }}>
-            From first connection to first cancellation.<br/>Under three minutes.
-          </h2>
-          <p style={{ fontSize: 16, color: "#6b7280", lineHeight: 1.75, maxWidth: 560, marginBottom: 48 }}>
-            This is the exact sequence. No tutorial. No setup checklist. The value appears before most apps finish loading.
-          </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 0, maxWidth: 820, margin: "0 auto" }}>
-            {[
-              { n:"00:00", t:"Bank connected via Plaid",      d:"Read-only OAuth. No passwords stored. 30 seconds from tap to connected.",                              icon:"🏦", color:"#3b82f6", tag:"30 seconds" },
-              { n:"00:42", t:"Kill Switch™ scans immediately", d:"The moment your bank is linked, Kill Switch™ begins scanning all recurring charges — no configuration needed.", icon:"🔍", color:"#f59e0b", tag:"42 seconds" },
-              { n:"01:08", t:"Zombies surface",               d:"Within 68 seconds, RECEKON shows you every subscription you're being charged — sorted by last-used date. Most users see at least 4 they'd forgotten.", icon:"⛔", color:"#ef4444", tag:"68 seconds" },
-              { n:"01:31", t:"One tap to cancel",             d:"Tap 'Cancel' on any subscription. Kill Switch™ sends the cancellation request via the merchant's official API. No login. No hold music. Confirmation arrives in seconds.", icon:"✓", color:"#22c55e", tag:"91 seconds" },
-              { n:"01:51", t:"First cancellation confirmed",  d:"111 seconds from opening RECEKON to a confirmed cancellation receipt in your vault. The subscription cannot renew.", icon:"🎉", color:"#22c55e", tag:"111 seconds" },
-            ].map((s, i) => (
-              <div key={i} style={{ display: "flex", gap: 20, paddingBottom: i < 4 ? 32 : 0, marginBottom: i < 4 ? 32 : 0, borderBottom: i < 4 ? "1px solid #e5e5e5" : "none" }}>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
-                  <div style={{ width: 48, height: 48, borderRadius: "50%", background: `${s.color}15`, border: `2px solid ${s.color}40`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>{s.icon}</div>
-                  {i < 4 && <div style={{ width: 2, height: 24, background: "#e5e5e5", marginTop: 4 }} />}
-                </div>
-                <div style={{ paddingTop: 10 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                    <span style={{ fontSize: 15, fontWeight: 800, color: "#0a0a0a" }}>{s.t}</span>
-                    <code style={{ fontSize: 9, fontWeight: 800, color: s.color, background: `${s.color}12`, padding: "2px 7px", borderRadius: 4, fontFamily: "monospace" }}>{s.tag}</code>
-                  </div>
-                  <p style={{ margin: 0, fontSize: 14, color: "#6b7280", lineHeight: 1.7 }}>{s.d}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div style={{ marginTop: 48, background: "#0a0a0a", borderRadius: 16, padding: "28px 32px", display: "flex", alignItems: "center", gap: 24 }} className="ks-split">
-            <div style={{ fontSize: 40 }}>⚡</div>
-            <div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: "#fff", marginBottom: 6 }}>111 seconds. First zombie killed.</div>
-              <p style={{ margin: 0, fontSize: 14, color: "rgba(255,255,255,0.5)", lineHeight: 1.7 }}>No tutorial. No setup wizard. No CSV to upload. The product is the onboarding — because value this immediate needs no explanation.</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Onboarding flow — 3D live */}
+      <KillSwitchTimeline />
     </Page>
   );
 }

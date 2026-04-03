@@ -53,7 +53,8 @@ export default function GDPRPage() {
             <p style={{ fontSize: 15, color: "#6b7280", lineHeight: 1.75, marginBottom: 28 }}>
               RECEKON processes personal data only where a valid legal basis under Article 6 GDPR exists.
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 0, border: "1px solid #e5e5e5", borderRadius: 14, overflow: "hidden" }}>
+            <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" as any }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 0, border: "1px solid #e5e5e5", borderRadius: 14, overflow: "hidden", minWidth: 420 }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr auto", background: "#f5f5f5", borderBottom: "1px solid #e5e5e5", padding: "12px 20px" }}>
                 <span style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.08em" }}>Legal basis</span>
                 <span style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.08em" }}>Applies to</span>
@@ -66,6 +67,7 @@ export default function GDPRPage() {
                   <code style={{ fontSize: 11, color: "#7c3aed", fontFamily: "monospace", fontWeight: 700, whiteSpace: "nowrap" }}>{b.article}</code>
                 </div>
               ))}
+            </div>
             </div>
           </div>
 

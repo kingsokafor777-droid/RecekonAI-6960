@@ -240,10 +240,10 @@ function HeroSection() {
             <span style={{ color: "#22c55e" }}>handled.</span>
           </h1>
           <p className="kn-body" style={{ maxWidth: 460, marginBottom: 36, color: "#374151" }}>
-            RECEKON doesn't track your money. It protects it. AI agents that detect, decide, and act — cancelling zombie subscriptions, reconciling every receipt to the SKU, generating tax deductions, and optimizing spend. While you sleep.
+            RECEKON doesn't just track your money. AI agents that detect, decide, and act — cancelling zombie subscriptions, reconciling every receipt to the SKU, generating tax deductions, and optimizing spend. While you sleep.
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 40 }} className="hero-btns">
-            <button className="kn-btn-dark" onClick={() => navigate("/#waitlist")} style={{ flex: "1 1 auto", minWidth: 140 }}>Get Started ›</button>
+            <button className="kn-btn-dark" onClick={() => document.getElementById("waitlist")?.scrollIntoView({ behavior: "smooth" })} style={{ flex: "1 1 auto", minWidth: 140 }}>Get Started ›</button>
             <button className="kn-btn-ghost" onClick={() => navigate("/products")} style={{ flex: "1 1 auto", minWidth: 140 }}>See how it works ›</button>
           </div>
           <div style={{ paddingTop: 24, borderTop: "1px solid #e5e5e5", display: "flex", gap: "clamp(20px,5vw,40px)", flexWrap: "wrap" }}>
@@ -578,7 +578,7 @@ function SocialProof() {
             onClick={() => openContact("I have a question about RECEKON.")}
             style={{
               display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap",
-              cursor: "pointer",
+              cursor: "pointer", rowGap: 12,
             }}
           >
             {/* AI Agent photo with LIVE badge */}
@@ -610,15 +610,15 @@ function SocialProof() {
               </div>
             </div>
 
-            <div style={{ marginLeft: "auto", display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <div className="sp-cta-row" style={{ marginLeft: "auto", display: "flex", gap: 10, flexWrap: "wrap" }}>
               <button
-                className="kn-btn-ghost"
+                className="kn-btn-ghost sp-cta-btn"
                 onClick={e => { e.stopPropagation(); openContact("I have a question about RECEKON."); }}
               >
                 Ask a question →
               </button>
               <button
-                className="kn-btn-ghost"
+                className="kn-btn-ghost sp-cta-btn"
                 onClick={e => { e.stopPropagation(); openContact("I'd like to request a demo of RECEKON."); }}
               >
                 Request a demo →
@@ -660,6 +660,10 @@ function SocialProof() {
         @keyframes csDot2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
         .stat-row { grid-template-columns: repeat(3,1fr); }
         @media(max-width:600px) { .stat-row { grid-template-columns:1fr!important; } }
+        @media(max-width:768px) {
+          .sp-cta-row { margin-left:0!important; width:100%; }
+          .sp-cta-btn { width:100%!important; justify-content:center!important; }
+        }
       `}</style>
     </section>
   );
@@ -693,7 +697,7 @@ function WaitlistCTA() {
           Early Access
         </span>
         <h2 style={{ fontSize: "clamp(34px,5vw,60px)", fontWeight: 800, letterSpacing: "-0.035em", color: "#fff", marginBottom: 16, lineHeight: 1.05 }}>
-          Your money.<br/><span style={{ color: "#22c55e" }}>Handled.</span>
+          Stop Leaking Money
         </h2>
         <p style={{ fontSize: 17, color: "rgba(255,255,255,0.5)", marginBottom: 40, lineHeight: 1.7 }}>
           Be among the first to deploy an autonomous financial control system. Not a tracker. Not a dashboard. An execution engine.
@@ -712,7 +716,7 @@ function WaitlistCTA() {
             <p style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>No spam. No credit card. Cancel any time.</p>
           </form>
         ) : (
-          <div style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 12, padding: "28px", maxWidth: 360, margin: "0 auto", padding: "0 clamp(16px,3.5vw,40px)" }}>
+          <div style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 12, padding: "28px clamp(16px,4vw,28px)", maxWidth: 360, margin: "0 auto" }}>
             <div style={{ fontSize: 28, marginBottom: 10 }}>✓</div>
             <div style={{ fontSize: 18, fontWeight: 700, color: "#22c55e", marginBottom: 8 }}>You're on the list.</div>
             <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>We'll reach out when early access opens.</div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Page } from "../../components/Layout";
 import { useLocation } from "wouter";
+import { useModal } from "../../components/ModalContext";
 
 function TaxReportBuilder() {
   const [step, setStep] = useState(0);
@@ -75,6 +76,7 @@ const MARKETS = [
 
 export default function TaxUseCasePage() {
   const [, navigate] = useLocation();
+  const { openContact } = useModal();
   return (
     <Page>
       {/* Hero */}
@@ -111,7 +113,7 @@ export default function TaxUseCasePage() {
                   </div>
                 ))}
               </div>
-              <button onClick={() => navigate("/#waitlist")}
+              <button onClick={() => openContact("I want TaxLink to handle my deductions.")}
                 style={{ background: "#22c55e", color: "#fff", border: "none", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
                 Get early access →
               </button>

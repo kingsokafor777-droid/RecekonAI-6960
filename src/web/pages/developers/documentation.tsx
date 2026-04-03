@@ -5,7 +5,7 @@ import { Page } from "../../components/Layout";
 const ENDPOINTS = [
   {
     method: "POST", path: "/v1/webhooks/register",
-    desc: "Register a webhook endpoint to receive real-time events.",
+    desc: "Register a webhook endpoint. RECEKON pushes a signed HTTPS POST the moment an event fires — no polling, no missed events, exponential backoff retry built in.",
     body: `{
   "url": "https://your-server.com/recekon",
   "events": ["transaction.matched", "zombie.detected",
@@ -21,7 +21,7 @@ const ENDPOINTS = [
   },
   {
     method: "GET", path: "/v1/transactions",
-    desc: "Retrieve reconciled transactions with SKU-level detail.",
+    desc: "Retrieve reconciled transactions with SKU-level detail. Every bank transaction matched to its receipt, every receipt broken to the product name, unit price, and tax category.",
     body: null,
     response: `{
   "data": [{
@@ -41,7 +41,7 @@ const ENDPOINTS = [
   },
   {
     method: "POST", path: "/v1/subscriptions/{id}/cancel",
-    desc: "Cancel a detected zombie subscription immediately.",
+    desc: "Cancel a zombie subscription using the official cancellation APIs of 4,000+ merchants — no stored credentials required. RECEKON knows which button to press.",
     body: `{
   "reason": "user_requested",
   "notify_user": true
@@ -55,7 +55,7 @@ const ENDPOINTS = [
   },
   {
     method: "GET", path: "/v1/tax/report",
-    desc: "Generate audit-ready deduction report for any tax jurisdiction.",
+    desc: "Generate an audit-ready deduction report. Every eligible expense auto-categorized to CRA, IRS, or HMRC standards — receipts attached, confidence scored. 13 hours of tax prep → zero.",
     body: null,
     response: `{
   "jurisdiction": "CRA",
@@ -73,12 +73,12 @@ const ENDPOINTS = [
 ];
 
 const EVENTS = [
-  { event: "transaction.matched", desc: "Bank transaction reconciled to receipt with SKU detail extracted.", color: "#22c55e" },
-  { event: "zombie.detected",     desc: "Unused subscription identified — cancellation available.",          color: "#ef4444" },
-  { event: "receipt.parsed",      desc: "Email receipt parsed, SKUs and line items normalized.",             color: "#3b82f6" },
-  { event: "card.blocked",        desc: "Card rule triggered, merchant spend blocked in real time.",         color: "#f59e0b" },
-  { event: "tax.deduction_found", desc: "Deductible expense categorized and receipt attached.",              color: "#7c3aed" },
-  { event: "price.drop_detected", desc: "Item purchased at higher price — refund claim initiated.",         color: "#0ea5e9" },
+  { event: "TRANSACTION_CREATED",    desc: "New transaction detected from bank sync. Fires within seconds of charge posting — begins the Stitching Engine match cycle.", color: "#22c55e" },
+  { event: "RECEIPT_EXTRACTED",      desc: "Email receipt parsed and normalized. Merchant, line items, unit prices, and tax data ready for matching.",                  color: "#3b82f6" },
+  { event: "TRANSACTION_MATCHED",    desc: "Stitching Engine found a receipt match. Payload includes full SKU breakdown, confidence score, and reasoning trail.",        color: "#4ade80" },
+  { event: "SUBSCRIPTION_DETECTED",  desc: "Zombie Detector identified a recurring charge. Includes usage signal, monthly cost, and cancellation readiness.",           color: "#ef4444" },
+  { event: "CANCEL_COMPLETED",       desc: "Subscription successfully terminated via merchant API. Includes confirmation, effective date, and savings recovered.",       color: "#f59e0b" },
+  { event: "REFUND_REQUESTED",       desc: "Price Guardian detected a post-purchase price drop and submitted a refund claim. Includes amount and merchant response.",   color: "#0ea5e9" },
 ];
 
 const CODE_VERIFY = `// Verify webhook signature (Node.js)
@@ -137,10 +137,10 @@ export default function DocumentationPage() {
                 <span style={{ fontSize: 11, fontWeight: 700, color: "#22c55e", letterSpacing: "0.08em", textTransform: "uppercase" }}>API Reference</span>
               </div>
               <h1 style={{ fontSize: "clamp(36px,4.5vw,58px)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.05, color: "#fff", marginBottom: 20 }}>
-                Every dollar.<br/><span style={{ color: "#22c55e" }}>One clean API.</span>
+                Full API reference,<br/><span style={{ color: "#22c55e" }}>SDKs, and guides.</span>
               </h1>
               <p style={{ fontSize: 17, color: "rgba(255,255,255,0.5)", lineHeight: 1.8, maxWidth: 460, marginBottom: 32 }}>
-                RECEKON exposes the full power of its reconciliation engine through a single, predictable REST API. Webhooks fire in real time. Responses are typed. SDKs ship for Node, Python, Go.
+                A REST architecture that anticipates what you need before you ask — organized around four resource domains, structured around the natural flow of financial data. Every response typed. Every error semantic. Every payload atomic.
               </p>
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                 <div style={{ background: "#111", border: "1px solid #222", borderRadius: 10, padding: "12px 18px", display: "flex", gap: 10, alignItems: "center" }}>
@@ -187,9 +187,12 @@ export default function DocumentationPage() {
       <section style={{ background: "#fff", padding: "clamp(56px,8vw,96px) clamp(16px,3.5vw,40px)" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <p style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 14 }}>Endpoints</p>
-          <h2 style={{ fontSize: "clamp(28px,3.5vw,44px)", fontWeight: 800, letterSpacing: "-0.025em", color: "#0a0a0a", marginBottom: 48 }}>
-            Four primitives.<br/>Everything you need.
+          <h2 style={{ fontSize: "clamp(28px,3.5vw,44px)", fontWeight: 800, letterSpacing: "-0.025em", color: "#0a0a0a", marginBottom: 12 }}>
+            Four domains.<br/>Complete coverage.
           </h2>
+          <p style={{ fontSize: 16, color: "#6b7280", lineHeight: 1.75, maxWidth: 520, marginBottom: 48 }}>
+            Every endpoint follows a predictable naming convention. Every response follows a consistent structure. Every error code carries semantic meaning — not a number to look up.
+          </p>
 
           <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: 32 }} className="dev-split">
             {/* Sidebar */}
@@ -264,7 +267,7 @@ export default function DocumentationPage() {
             Your backend stays in sync.<br/>Automatically.
           </h2>
           <p style={{ fontSize: 16, color: "#6b7280", lineHeight: 1.75, maxWidth: 520, marginBottom: 48 }}>
-            RECEKON fires a signed HTTPS POST to your endpoint the moment an event occurs. No polling. No missed events. Retry logic built in with exponential backoff.
+            The traditional approach is polling — asking the same question repeatedly until something changes. We replaced it with push. When a transaction matches, you know within seconds. When a cancellation completes, you get confirmation with the merchant's response. Everything you need, the moment it happens.
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }} className="sec-grid">
             {EVENTS.map((e, i) => (
@@ -286,7 +289,7 @@ export default function DocumentationPage() {
               Every payload is signed.<br/>Verify in one line.
             </h2>
             <p style={{ fontSize: 15, color: "rgba(255,255,255,0.5)", lineHeight: 1.8, marginBottom: 32 }}>
-              Every webhook includes an <code style={{ color: "#22c55e", fontFamily: "monospace" }}>X-Recekon-Signature</code> header — HMAC-SHA256 signed with your webhook secret. Replay attacks are rejected automatically using request timestamps.
+              Every webhook includes an <code style={{ color: "#22c55e", fontFamily: "monospace" }}>X-Recekon-Signature</code> header — HMAC-SHA256 signed with your webhook secret. Replay attacks are rejected automatically via timestamp window enforcement. Verification is a single method call — no crypto boilerplate.
             </p>
             {[
               ["Signed payloads", "HMAC-SHA256 on every request"],
@@ -327,7 +330,9 @@ export default function DocumentationPage() {
         <div style={{ maxWidth: 1100, margin: "0 auto", textAlign: "center" }}>
           <p style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 14 }}>SDKs</p>
           <h2 style={{ fontSize: "clamp(28px,3.5vw,44px)", fontWeight: 800, letterSpacing: "-0.025em", color: "#0a0a0a", marginBottom: 14 }}>Ship in your language.</h2>
-          <p style={{ fontSize: 16, color: "#6b7280", lineHeight: 1.75, maxWidth: 480, margin: "0 auto 48px" }}>Official SDKs. Full TypeScript types. Maintained by the RECEKON team.</p>
+          <p style={{ fontSize: 16, color: "#6b7280", lineHeight: 1.75, maxWidth: 520, margin: "0 auto 48px" }}>
+            Hand-crafted SDKs — not generated wrappers. Each one feels native to its language. Zero runtime dependencies. OAuth refresh, retries, pagination, and webhook verification handled so you don't have to.
+          </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, maxWidth: 720, margin: "0 auto 48px" }} className="sec-grid">
             {[
               { lang: "Node.js", pkg: "npm install @recekon/sdk", icon: "⬡", badge: "Stable" },
